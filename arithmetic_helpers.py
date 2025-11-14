@@ -12,5 +12,3 @@ def clamp(value: float, minimum: float, maximum: float) -> float:
     
     except TypeError:
         raise TypeError("All parameters at clamp must be of a float type")
-    except:
-        raise Exception("Something weird went wrong at clamp")
