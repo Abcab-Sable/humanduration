@@ -12,29 +12,41 @@ import math
 
 def clamp(value: float, minimum: float, maximum: float) -> float:
 
-    if math.isnan(minimum) or math.isnan(maximum):
-        raise ValueError("minimum and maximum parameters at clamp cannot be a NaN")
+    # Validate NaN
+    if any(math.sinan(x) for x in (value, minimum, maximum)):
+        raise ValueError("Parameters at clamp cannot be NaN")
 
-    if math.isinf(minimum):
-        raise ValueError("minimum parameter at clamp cannot be positive-infinity")
+    # Handle bounds involving infinities
+    # Minimum is +inf
+    if math.isinf(minimum) and minimum > 0:
+        if minimum > maximum:
+            raise ValueError(
+                "minimum parameter cannot be higher than the maximum parameter at clamp"
+            )
+        return minimum
 
-    if math.isinf(-maximum):
-        raise ValueError("maximum parameter at clamp cannot be negative-infinity")
+    # Maximum is -inf
+    if math.isinf(maximum) and maximum < 0:
+        if maximum < minimum:
+            raise ValueError(
+                "maximum parameter cannot be lower than the minimum parameter at clamp"
+            )
+        return maximum
 
+    # Normal validation of order
     if minimum > maximum:
         raise ValueError(
             "Minimum parameter at clamp must be lower than the Maximum parameter at clamp"
         )
-
-    if math.isnan(value):
-        raise ValueError("value parameter at clamp cannot be a NaN")
-
+    
+    # Handle infinite value
     if math.isinf(value):
-        return maximum
+        if value > 0:
+            return maximum
+        else:
+            return minimum
 
-    if math.isinf(-value):
-        return minimum
-
+    # Clamping logic
     if value < minimum:
         return minimum
     elif value > maximum:
