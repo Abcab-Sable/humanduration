@@ -1,50 +1,61 @@
+from __future__ import annotations
+
 import math
+from typing import SupportsFloat
 
-# Edge cases for numbers:
-#   For NaN, the function should raise an error.
-#   For inf, the function should raise an error if it is the minimum.
-#       if maximum is inf, that just means the upper bound is unbounded.
-#   For -inf, the function should raise an error if it is the maximum.
-#       if minimum is -inf, that just means the lower bound is unbounded.
-#   If value is inf, maximum should be returned.
-#   If value is -inf, minimum should be returned.
+def clamp(value: SupportsFloat, minimum: SupportsFloat, maximum: SupportsFloat) -> float:
 
+    """
+    Return ``value`` constrained to the inclusive range [minimum, maximum].
 
-def clamp(value: float, minimum: float, maximum: float) -> float:
+    Parameters
+    ----------
+    value : SupportsFloat
+        The input value to clamp.
+    minimum : SupportsFloat
+        The lower bound of the clamping range.
+    maximum : SupportsFloat
+        The upper bound of the clamping range.
+
+    Returns
+    -------
+    float
+        ``minimum`` if ``value < minimum``;
+        ``maximum`` if ``value > maximum``;
+        otherwise ``value`` converted to ``float``.
+
+    Raises
+    ------
+    TypeError
+        If any argument cannot be converted to ``float``.
+    ValueError
+        If ``minimum`` or ``maximum`` is NaN, or if ``minimum > maximum``.
+
+    Notes
+    -----
+    * NaN is rejected because no meaningful ordering is possible.
+    * Infinite values are clamped normally to the finite bound.
+    * All inputs are converted to ``float`` for consistent behaviour.
+
+    """
+    
+    # Duck-type Validation
+    try:
+        value = float(value)
+        minimum = float(minimum)
+        maximum = float(maximum)
+    except (ValueError, TypeError):
+        raise TypeError("Parameters at clamp must be real numbers")
 
     # Validate NaN
-    if any(math.sinan(x) for x in (value, minimum, maximum)):
+    if math.isnan(value) or math.isnan(minimum) or math.isnan(maximum):
         raise ValueError("Parameters at clamp cannot be NaN")
-
-    # Handle bounds involving infinities
-    # Minimum is +inf
-    if math.isinf(minimum) and minimum > 0:
-        if minimum > maximum:
-            raise ValueError(
-                "minimum parameter cannot be higher than the maximum parameter at clamp"
-            )
-        return minimum
-
-    # Maximum is -inf
-    if math.isinf(maximum) and maximum < 0:
-        if maximum < minimum:
-            raise ValueError(
-                "maximum parameter cannot be lower than the minimum parameter at clamp"
-            )
-        return maximum
 
     # Normal validation of order
     if minimum > maximum:
         raise ValueError(
             "Minimum parameter at clamp must be lower than the Maximum parameter at clamp"
         )
-    
-    # Handle infinite value
-    if math.isinf(value):
-        if value > 0:
-            return maximum
-        else:
-            return minimum
 
     # Clamping logic
     if value < minimum:
@@ -52,3 +63,4 @@ def clamp(value: float, minimum: float, maximum: float) -> float:
     elif value > maximum:
         return maximum
     return value
+
