@@ -1,0 +1,2 @@
+class DurationParseError(Exception):
+    pass
