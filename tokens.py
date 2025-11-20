@@ -1,7 +1,7 @@
 from .units import UNITS as u
 from .exceptions import DurationParseError
 
-test = "-1hr-2.1m-3s"
+test = " -1hr-2.1m-3s"
 
 def flush_unit_token(unit_token, valid_units, duration_token, duration_tokens):
     joined_unit = "".join(unit_token)
@@ -23,7 +23,7 @@ def scan(dur_str):
     length = len(dur_str)
     first_char = dur_str[0]
     if (not first_char.isdigit()) and (not first_char in ["-", "+", "."]):
-        raise DurationParseError("Invalid duration string")
+        raise DurationParseError("Invalid duration string - doesn't start with a valid character")
 
     for i, character in enumerate(dur_str):
         last_char = i == (length - 1)
@@ -55,7 +55,7 @@ def scan(dur_str):
 
         if not character.isdigit():
             if digit_token:
-                
+
                 float_token = "".join(digit_token)
 
                 try:
