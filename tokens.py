@@ -1,7 +1,7 @@
 from .units import UNITS as u
 from .exceptions import DurationParseError
 
-test = "+30hr -3.20min15secs3"
+test = "1hr2m3s"
 
 def scan(dur_str):
 
@@ -25,7 +25,6 @@ def scan(dur_str):
             if unit_token:
                 joined_unit = "".join(unit_token)
                 if joined_unit in valid_units:
-                    print([unit for unit in valid_units if unit == joined_unit])
                     duration_token.append(joined_unit)
                     duration_tokens.append(duration_token)
                     unit_token = []
